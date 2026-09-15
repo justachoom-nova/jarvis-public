@@ -1,0 +1,138 @@
+{
+  "name": "QuoteLog",
+  "type": "object",
+  "properties": {
+    "address": {
+      "type": "string",
+      "title": "Property Address"
+    },
+    "lotSquareFootage": {
+      "type": "number",
+      "title": "Lot Square Footage"
+    },
+    "driveTimeMinutes": {
+      "type": "number",
+      "title": "Drive Time (min)"
+    },
+    "driveDistanceMiles": {
+      "type": "number",
+      "title": "Drive Distance (mi)"
+    },
+    "narrowGate": {
+      "type": "integer",
+      "title": "Narrow Gate / Push Mower (0/1)"
+    },
+    "priorityTiming": {
+      "type": "string",
+      "enum": [
+        "standard",
+        "next-day",
+        "same-day"
+      ],
+      "title": "Timing Profile",
+      "default": "standard"
+    },
+    "reviewStatus": {
+      "type": "string",
+      "enum": [
+        "READY",
+        "PENDING_OWNER_REVIEW"
+      ],
+      "title": "Review Status",
+      "default": "READY"
+    },
+    "isApprovedForDensity": {
+      "type": "integer",
+      "title": "Approved for Density (0/1)"
+    },
+    "isMinimumFeeApplied": {
+      "type": "integer",
+      "title": "Minimum Fee Applied (0/1)"
+    },
+    "clockMowMinutes": {
+      "type": "integer",
+      "title": "Clock Mow Minutes"
+    },
+    "totalManHours": {
+      "type": "number",
+      "title": "Total Man-Hours"
+    },
+    "costLabor": {
+      "type": "number",
+      "title": "Labor Cost"
+    },
+    "costSurcharge": {
+      "type": "number",
+      "title": "Accessibility Surcharge"
+    },
+    "costLogistics": {
+      "type": "number",
+      "title": "Logistics Cost"
+    },
+    "costTotalDirect": {
+      "type": "number",
+      "title": "Total Direct Cost"
+    },
+    "basePriceDerived": {
+      "type": "number",
+      "title": "Base Price Derived"
+    },
+    "rateCardBaseline": {
+      "type": "number",
+      "title": "Rate-Card Baseline"
+    },
+    "costPlusBaseline": {
+      "type": "number",
+      "title": "Cost-Plus Baseline"
+    },
+    "timingPremium": {
+      "type": "number",
+      "title": "Timing Premium"
+    },
+    "activeFuelPriceUsed": {
+      "type": "number",
+      "title": "Active Fuel Price Used ($/gal)"
+    },
+    "finalClientQuote": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "title": "Final Client Quote"
+    },
+    "pricingDriver": {
+      "type": "string",
+      "enum": [
+        "COST_PLUS_MARGIN",
+        "RATE_CARD"
+      ],
+      "title": "Pricing Driver"
+    }
+  },
+  "required": [
+    "address",
+    "pricingDriver"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}

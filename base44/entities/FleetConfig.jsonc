@@ -1,0 +1,90 @@
+{
+  "name": "FleetConfig",
+  "type": "object",
+  "properties": {
+    "pricePerThousandSqFt": {
+      "type": "number",
+      "title": "Price per 1,000 sq ft ($)"
+    },
+    "hourlyLaborRatePerWorker": {
+      "type": "number",
+      "title": "Hourly Labor Rate ($/worker)"
+    },
+    "crewSizeCount": {
+      "type": "integer",
+      "title": "Crew Size (workers)"
+    },
+    "baseMowSpeedSqFtPerHour": {
+      "type": "number",
+      "title": "Base Mow Speed (sq ft/hr)"
+    },
+    "truckAverageMpg": {
+      "type": "number",
+      "title": "Truck Average MPG"
+    },
+    "currentFuelPricePerGallon": {
+      "type": "number",
+      "title": "Current Fuel Price ($/gal)"
+    },
+    "vehicleWearRatePerMile": {
+      "type": "number",
+      "title": "Vehicle Wear Rate ($/mile)"
+    },
+    "minimumTripFee": {
+      "type": "number",
+      "title": "Minimum Trip Fee ($)"
+    },
+    "flatConvenienceFee": {
+      "type": "number",
+      "title": "Flat Convenience Fee ($)"
+    },
+    "targetGrossMargin": {
+      "type": "number",
+      "title": "Target Gross Margin (0\u20131)"
+    },
+    "maxDensityRadiusMiles": {
+      "type": "number",
+      "title": "Max Density Radius (mi)"
+    },
+    "depotAddress": {
+      "type": "string",
+      "title": "Depot / Nearest Route Origin Address"
+    }
+  },
+  "required": [
+    "pricePerThousandSqFt",
+    "hourlyLaborRatePerWorker",
+    "crewSizeCount",
+    "baseMowSpeedSqFtPerHour",
+    "truckAverageMpg",
+    "currentFuelPricePerGallon",
+    "vehicleWearRatePerMile",
+    "minimumTripFee",
+    "flatConvenienceFee",
+    "targetGrossMargin",
+    "maxDensityRadiusMiles",
+    "depotAddress"
+  ],
+  "rls": {
+    "read": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "create": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "update": {
+      "user_condition": {
+        "role": "admin"
+      }
+    },
+    "delete": {
+      "user_condition": {
+        "role": "admin"
+      }
+    }
+  }
+}
