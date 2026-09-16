@@ -2,6 +2,10 @@
   "name": "FleetConfig",
   "type": "object",
   "properties": {
+    "ownerEmail": {
+      "type": "string",
+      "title": "Owner Account Email (landscaper tenant)"
+    },
     "pricePerThousandSqFt": {
       "type": "number",
       "title": "Price per 1,000 sq ft ($)"
@@ -52,6 +56,7 @@
     }
   },
   "required": [
+    "ownerEmail",
     "pricePerThousandSqFt",
     "hourlyLaborRatePerWorker",
     "crewSizeCount",
@@ -66,20 +71,18 @@
     "depotAddress"
   ],
   "rls": {
+    "create": true,
     "read": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
-    "create": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        { "data.ownerEmail": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
     },
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        { "data.ownerEmail": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
     },
     "delete": {
       "user_condition": {

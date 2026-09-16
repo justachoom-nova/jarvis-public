@@ -2,6 +2,10 @@
   "name": "QuoteLog",
   "type": "object",
   "properties": {
+    "ownerEmail": {
+      "type": "string",
+      "title": "Owner Account Email (landscaper tenant)"
+    },
     "address": {
       "type": "string",
       "title": "Property Address"
@@ -110,24 +114,27 @@
     }
   },
   "required": [
+    "ownerEmail",
     "address",
     "pricingDriver"
   ],
   "rls": {
-    "read": {
-      "user_condition": {
-        "role": "admin"
-      }
-    },
     "create": {
       "user_condition": {
         "role": "admin"
       }
     },
+    "read": {
+      "$or": [
+        { "data.ownerEmail": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
+    },
     "update": {
-      "user_condition": {
-        "role": "admin"
-      }
+      "$or": [
+        { "data.ownerEmail": "{{user.email}}" },
+        { "user_condition": { "role": "admin" } }
+      ]
     },
     "delete": {
       "user_condition": {

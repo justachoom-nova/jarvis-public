@@ -54,17 +54,28 @@ export default async function(req) {
     const base44 = createClientFromRequest(req);
     const body = await req.json().catch(() => ({}));
 
-    // ---- Auth: trusted webhook secret OR authenticated admin ----
+    // ---- Auth: trusted webhook secret (multi-tenant: caller names the account)
+    //      OR any authenticated user generating a quote for their own account ----
     const webhookSecret = secrets.get('WEBHOOK_SECRET');
     const url = new URL(req.url);
     const providedSecret =
       url.searchParams.get('secret') || req.headers.get('x-webhook-secret');
-    if (!(providedSecret && webhookSecret && providedSecret === webhookSecret)) {
+    const isWebhookAuth = !!(providedSecret && webhookSecret && providedSecret === webhookSecret);
+
+    let ownerEmail;
+    if (isWebhookAuth) {
+      // No session in a webhook call — the caller (e.g. a landscaper's CRM)
+      // must name which tenant account this quote belongs to.
+      ownerEmail = (body.ownerEmail || '').trim();
+      if (!ownerEmail) {
+        return Response.json({ error: 'ownerEmail is required for webhook-authenticated requests' }, { status: 400 });
+      }
+    } else {
       const user = await base44.auth.me();
       if (!user) return Response.json({ error: 'Unauthorized' }, { status: 401 });
-      if (user.role !== 'admin') {
-        return Response.json({ error: 'Forbidden: admin only' }, { status: 403 });
-      }
+      // Any authenticated tenant (role 'user' or 'admin') can generate a quote
+      // for their own account — this is no longer admin-only.
+      ownerEmail = user.email;
     }
 
     // ---- Validate input ----
@@ -79,12 +90,18 @@ export default async function(req) {
       ? body.timingProfile
       : 'standard';
 
-    // ---- Load active FleetOperationalConfig (latest) ----
-    const configs = await base44.asServiceRole.entities.FleetConfig.list('-updated_date', 1);
+    // ---- Load this tenant's active FleetOperationalConfig ----
+    // Scoped by ownerEmail: asServiceRole bypasses RLS entirely, so this filter
+    // is the only thing preventing one tenant's config from being used for another's quote.
+    const configs = await base44.asServiceRole.entities.FleetConfig.filter(
+      { ownerEmail },
+      '-updated_date',
+      1
+    );
     const config = configs[0];
     if (!config) {
       return Response.json(
-        { error: 'No FleetOperationalConfig found. Admin must configure the fleet first.' },
+        { error: 'No FleetOperationalConfig found for this account. Configure the fleet first.' },
         { status: 503 }
       );
     }
@@ -162,7 +179,11 @@ export default async function(req) {
     });
 
     // ---- Persist quote log (flattened V3 dbFields) ----
+    // asServiceRole writes are not attributed to the calling user (Base44 stamps
+    // a synthetic service identity, not the tenant), so ownership must be set explicitly
+    // here for the read/update RLS on QuoteLog to isolate this record correctly.
     const logRecord = await base44.asServiceRole.entities.QuoteLog.create({
+      ownerEmail,
       pricingDriver: manifest.pricingDriver,
       ...manifest.dbFields,
     });
